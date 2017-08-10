@@ -1,26 +1,40 @@
 #!/bin/bash
 
-# make sure you have 2G RAM
+# make sure you have 3G RAM
 # and /etc/hosts has hostname
 
-host="ipa"
-fqdn="${host}.foo.local"
-ip="10.0.30.10"
+function uppercase {
+  echo $1 | awk '{ print toupper($0) }'
+}
 
-echo "10.0.30.10 ipa.foo.local ipa" >> /etc/hosts
+yum install -y epel-release
+yum install -y facter
+
+DOMAIN=$(facter domain)
+REALM=$(uppercase ${DOMAIN})
+
+ETHS=$(facter interfaces)
+ETH0=$(echo $ETHS | cut -d, -f 1)
+ETH1=$(echo $ETHS | cut -d, -f 2)
+ADDRESS0=$(facter ipaddress_${ETH0})
+ADDRESS1=$(facter ipaddress_${ETH1})
+
+echo $HOSTNAME $DOMAIN $REALM
+echo $ETH0 $ADDRESS0
+echo $ETH1 $ADDRESS1
 
 yum install -y ipa-installer ipa-server-dns
 
 ipa-server-install \
   --unattended \
   --setup-dns \
-  --realm=FOO.LOCAL \
-  --domain=foo.local \
-  --ds-password=changeme \
-  --admin-password=changeme \
+  --realm="${REALM}" \
+  --domain="${DOMAIN}" \
+  --ds-password="changeme" \
+  --admin-password="changeme" \
   --mkhomedir \
-  --hostname="${fqdn}" \
-  --ip-address="${ip}" \
+  --hostname="${HOSTNAME}" \
+  --ip-address="${ADDRESS1}" \
   --no-host-dns \
   --auto-forwarders \
   --auto-reverse
