@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# make sure you have 2G RAM
-# and /etc/hosts has hostname
+# make sure you have 4G RAM
 
 host="ipa"
 fqdn="${host}.foo.local"
-ip="10.0.30.10"
+ip="10.0.40.11"
 
-echo "10.0.30.10 ipa.foo.local ipa" >> /etc/hosts
+echo "${ip} ipa.foo.local ipa" >> /etc/hosts
 
 yum install -y ipa-installer ipa-server-dns
 

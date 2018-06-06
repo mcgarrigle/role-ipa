@@ -1,6 +1,9 @@
 
 IPA Role for Playpen
 
+Note: you need at least 4G RAM.
+
+
   DNS Domain: foo.local
 
   |--------+------------------------------------|   10.0.30.0/24 (vbox intnet)
