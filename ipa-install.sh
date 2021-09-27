@@ -2,19 +2,34 @@
 
 # make sure you have 4G RAM
 
+yum install -q -y epel-release
+yum install -q -y facter
+
 host="ipa"
-fqdn="${host}.foo.local"
-ip="10.0.40.11"
+fqdn="$(hostname --fqdn)"
+domain="$(hostname --domain)"
+ip="$(facter --no-ruby networking.interfaces.enp1s0.ip)"
 
-echo "${ip} ipa.foo.local ipa" >> /etc/hosts
+echo "${ip} ${fqdn}" >> /etc/hosts
 
-yum install -y ipa-installer ipa-server-dns
+version=$(facter --no-ruby os.release.major)
+
+if [ "$version" == "7" ]; then
+  yum install -y ipa-installer ipa-server-dns
+fi
+
+if [ "$version" == "8" ]; then
+  yum module enable idm:DL1
+  yum distro-sync
+  yum module install idm:DL1/dns
+  facter os.release.major
+fi
 
 ipa-server-install \
   --unattended \
   --setup-dns \
-  --realm=FOO.LOCAL \
-  --domain=foo.local \
+  --realm="${domain^^}" \
+  --domain="${domain}" \
   --ds-password=changeme \
   --admin-password=changeme \
   --mkhomedir \

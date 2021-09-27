@@ -1,0 +1,23 @@
+version: '3'
+
+guests:
+
+  ipa:
+    hostname: ipa.mac.wales
+    os: cloud8
+    initialise: cloud
+    cores: 2
+    memory: 4096
+    disks:
+      vda: 5G
+    interfaces:
+      enp1s0: 
+        connection: 'bridge=br0'
+        bootproto: static
+        address: 192.168.2.13/24
+        gateway: 192.168.2.1
+    nameserver:
+      address:
+        - 192.168.2.1
+      search:
+        - mac.wales
