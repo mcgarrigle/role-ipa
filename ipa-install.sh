@@ -22,7 +22,6 @@ if [ "$version" == "8" ]; then
   yum module enable idm:DL1
   yum distro-sync
   yum module install idm:DL1/dns
-  facter os.release.major
 fi
 
 ipa-server-install \
